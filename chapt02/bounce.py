@@ -30,16 +30,6 @@ class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
         window.Window.__init__(self, *args, **kwargs)
         
-        x = 0.0
-        y = 0.0
-        rsize = 25.0
-
-        xstep = 1.0
-        ystep = 1.0
-        
-        windowWidth = 100.0
-        windowHeight = 100.0
-        
         # Setup the rendering state
         glClearColor(0, 0, 1, 1)
 
@@ -100,6 +90,7 @@ class MainWindow(window.Window):
         # Reset coordinate system
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
+        
         # Establish clipping volume (left, right, bottom, top, near, far)
         aspectRatio = float(w) / float(h)
         if w <= h:

@@ -1,9 +1,9 @@
-# points.py
-# Demonstates OpenGL Primitive GL_POINTS
+# lines.py
+# Demonstates OpenGL Primitive GL_LINES
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: points.cpp
+# Based heavily on: lines.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com

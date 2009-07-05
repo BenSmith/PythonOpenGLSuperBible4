@@ -1,9 +1,9 @@
-# lstrips.py
-# Demonstates Primitive GL_LINE_STRIP
+# scissor.py
+# Demonstates OpenGL Primitive GL_POINTS
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: LStrips.cpp
+# Based heavily on: Scissor.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -14,49 +14,32 @@ from pyglet.gl import *
 from pyglet import window
 from pyglet.window import key
 
-xRot = 0.0
-yRot = 0.0
-
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
         window.Window.__init__(self, *args, **kwargs)
         
-        # Setup the rendering state
-        glClearColor(0, 0, 0, 1)
-        
-        # Set drawing color to green
-        glColor3f(0, 1, 0)
 
     # Called to draw scene
     def on_draw(self):
         # Clear the window with the current clearing color
+        glClearColor(0, 0, 1, 0)
         glClear(GL_COLOR_BUFFER_BIT)
+        
+        # Now set scissor to smaller red sub region
+        glClearColor(1, 0, 0, 0)
+        glScissor(100, 100, 600, 400)
+        glEnable(GL_SCISSOR_TEST)
+        glClear(GL_COLOR_BUFFER_BIT)
+        
+        # Finally, an even smaller green rectangle
+        glClearColor(0, 1, 0, 0)
+        glScissor(200, 200, 400, 200)
+        glClear(GL_COLOR_BUFFER_BIT)
+        
+        # Turn scissor back off for next render
+        glDisable(GL_SCISSOR_TEST)
+        
 
-        # Save matrix state and do the rotation
-        glPushMatrix()
-        glRotatef(xRot, 1, 0, 0)
-        glRotatef(yRot, 0, 1, 0)
-        
-        # Call only once for all remaining points
-        glBegin(GL_LINE_STRIP)
-        z = -50.0
-        angle = 0.0
-        while angle < (2.0 * 3.14159) * 3.0:
-            x = 50.0 * math.sin(angle)
-            y = 50.0 * math.cos(angle)
-            
-            # Specify the point and move the Z value up a little
-            glVertex3f(x, y, z)
-            
-            z += 0.5
-            angle += 0.1
-            
-        # Done drawing points
-        glEnd()
-        
-        # Restore transformations
-        glPopMatrix()
-        
         # Flush drawing commands
         # pyglet does this automatically when using pyglet.app.run()
         # otherwise, you can use flip() http://pyglet.org/doc/programming_guide/windows_and_opengl_contexts.html
@@ -86,29 +69,9 @@ class MainWindow(window.Window):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-    def on_key_press(self, symbol, modifier):
-        global xRot, yRot
-        if symbol == key.UP:
-            xRot -= 5.0
-        elif symbol == key.DOWN:
-            xRot += 5.0
-        elif symbol == key.LEFT:
-            yRot -= 5.0
-        elif symbol == key.RIGHT:
-            yRot += 5.0
-        
-        if xRot > 356.0:
-            xRot = 0.0
-        elif xRot < -1.0:
-            xRot = 355.0
-        if yRot > 356.0:
-            yRot = 0.0
-        if yRot < -1.0:
-            yRot = 355.0
-            
     
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(caption='Line Strips Example', resizable=True)
+    w = MainWindow(800, 600, caption='Lines Example', resizable=True)
     pyglet.app.run()

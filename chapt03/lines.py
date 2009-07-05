@@ -112,5 +112,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(caption='Points Example', resizable=True)
+    w = MainWindow(caption='Stippled Line Example', resizable=True)
     pyglet.app.run()

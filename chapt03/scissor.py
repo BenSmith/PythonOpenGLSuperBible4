@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # scissor.py
 # Demonstates OpenGL Primitive GL_POINTS
 # Ben Smith

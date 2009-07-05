@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # lstipple.py
 # Demonstates OpenGL line stippling
 # Ben Smith

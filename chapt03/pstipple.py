@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # pstipple.py
 # Demonstates OpenGL Polygon Stippling
 # Ben Smith

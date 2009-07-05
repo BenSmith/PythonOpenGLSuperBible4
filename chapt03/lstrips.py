@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # lstrips.py
 # Demonstates Primitive GL_LINE_STRIP
 # Ben Smith

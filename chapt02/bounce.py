@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # bounce.py
 # Demonstrates a simple animated rectangle program with pyglet
 # Ben Smith

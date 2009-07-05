@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # glrect.py
 # Just draw a single rectangle in the middle of the screen
 # Ben Smith

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # linesw.py
 # Demonstates OpenGL Primitive GL_LINES with line widths
 # Ben Smith

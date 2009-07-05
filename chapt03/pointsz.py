@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # points.py
 # Demonstates OpenGL Primitive GL_POINTS
 # Ben Smith

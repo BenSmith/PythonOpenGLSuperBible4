@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # single.py
 # Single buffer rendering
 # Ben Smith

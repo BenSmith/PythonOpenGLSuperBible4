@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Triangle.py
 # Demonstrates OpenGL Triangle Fans, backface culling, and depth testing
 # Ben Smith

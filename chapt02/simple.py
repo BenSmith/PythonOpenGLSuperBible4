@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # simple.py
 # The Simplest OpenGL program with pyglet
 # Ben Smith

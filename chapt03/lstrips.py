@@ -83,8 +83,8 @@ class MainWindow(window.Window):
             glOrtho (-nRange*w/h, nRange*w/h, -nRange, nRange, -nRange, nRange)
 
         # Reset Model view matrix stack
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
 
     def on_key_press(self, symbol, modifier):
         global xRot, yRot

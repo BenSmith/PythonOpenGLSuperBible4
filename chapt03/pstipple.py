@@ -1,9 +1,9 @@
-# points.py
-# Demonstates OpenGL Primitive GL_POINTS
+# pstipple.py
+# Demonstates OpenGL Polygon Stippling
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: points.cpp
+# Based heavily on: PStipple.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -16,7 +16,43 @@ from pyglet.window import key
 
 xRot = 0.0
 yRot = 0.0
+fireType = GLubyte * 128
 
+fire = fireType(0x00, 0x00, 0x00, 0x00, 
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0xc0,
+                        0x00, 0x00, 0x01, 0xf0,
+                        0x00, 0x00, 0x07, 0xf0,
+                        0x0f, 0x00, 0x1f, 0xe0,
+                        0x1f, 0x80, 0x1f, 0xc0,
+                        0x0f, 0xc0, 0x3f, 0x80,	
+                        0x07, 0xe0, 0x7e, 0x00,
+                        0x03, 0xf0, 0xff, 0x80,
+                        0x03, 0xf5, 0xff, 0xe0,
+                        0x07, 0xfd, 0xff, 0xf8,
+                        0x1f, 0xfc, 0xff, 0xe8,
+                        0xff, 0xe3, 0xbf, 0x70, 
+                        0xde, 0x80, 0xb7, 0x00,
+                        0x71, 0x10, 0x4a, 0x80,
+                        0x03, 0x10, 0x4e, 0x40,
+                        0x02, 0x88, 0x8c, 0x20,
+                        0x05, 0x05, 0x04, 0x40,
+                        0x02, 0x82, 0x14, 0x40,
+                        0x02, 0x40, 0x10, 0x80, 
+                        0x02, 0x64, 0x1a, 0x80,
+                        0x00, 0x92, 0x29, 0x00,
+                        0x00, 0xb0, 0x48, 0x00,
+                        0x00, 0xc8, 0x90, 0x00,
+                        0x00, 0x85, 0x10, 0x00,
+                        0x00, 0x03, 0x00, 0x00,
+                        0x00, 0x00, 0x10, 0x00
+                        )
+                    
+                    
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
         window.Window.__init__(self, *args, **kwargs)
@@ -24,9 +60,14 @@ class MainWindow(window.Window):
         # Setup the rendering state
         glClearColor(0, 0, 0, 1)
         
-        # Set drawing color to green
-        glColor3f(0, 1, 0)
+        # Set drawing color to red
+        glColor3f(1, 0, 0)
+        
+        # Enable polygon stippling
+        glEnable(GL_POLYGON_STIPPLE)
 
+        glPolygonStipple(fire)
+        
     # Called to draw scene
     def on_draw(self):
         # Clear the window with the current clearing color
@@ -37,23 +78,19 @@ class MainWindow(window.Window):
         glRotatef(xRot, 1, 0, 0)
         glRotatef(yRot, 0, 1, 0)
         
-        # Call only once for all remaining points
-        glBegin(GL_LINES)
-        z = 0.0
-        angle = 0.0
-        while angle <  3.14159:
-            # Top half of the circle
-            x = 50.0 * math.sin(angle)
-            y = 50.0 * math.cos(angle)
-            glVertex3f(x, y, z)
-            
-            # Bottom half of the circle
-            x = 50.0 * math.sin(angle + 3.14159)
-            y = 50.0 * math.cos(angle + 3.14159)
-            glVertex3f(x, y, z)
-            angle += 3.14159 / 20.0
-            
-        # Done drawing points
+        # Begin the stop sign shape,
+        # use a standard polygon for simplicity
+        glBegin(GL_POLYGON)
+
+        glVertex2f(-20.0, 50.0)
+        glVertex2f(20.0, 50.0)
+        glVertex2f(50.0, 20.0)
+        glVertex2f(50.0, -20.0)
+        glVertex2f(20.0, -50.0)
+        glVertex2f(-20.0, -50.0)
+        glVertex2f(-50.0, -20.0)
+        glVertex2f(-50.0, 20.0)
+
         glEnd()
         
         # Restore transformations
@@ -112,5 +149,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(caption='Lines Example', resizable=True)
+    w = MainWindow(caption='Polygon Stippling', resizable=True)
     pyglet.app.run()

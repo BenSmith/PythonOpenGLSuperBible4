@@ -1,9 +1,9 @@
-# points.py
-# Demonstates OpenGL Primitive GL_POINTS
+# pstipple.py
+# Demonstates OpenGL Polygon Stippling
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: points.cpp
+# Based heavily on: PStipple.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -16,6 +16,16 @@ from pyglet.window import key
 
 xRot = 0.0
 yRot = 0.0
+
+bEdgeFlag = True
+
+MODE_SOLID = 0
+MODE_LINE = 1
+MODE_POINT = 2
+
+iMode = MODE_SOLID
+
+# TODO: Need menus
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
@@ -32,28 +42,59 @@ class MainWindow(window.Window):
         # Clear the window with the current clearing color
         glClear(GL_COLOR_BUFFER_BIT)
 
+        # Draw back side as a polygon only, if flag is set
+        if(iMode == MODE_LINE):
+            glPolygonMode(GL_FRONT_AND_BACK,GL_LINE)
+
+        if(iMode == MODE_POINT):
+            glPolygonMode(GL_FRONT_AND_BACK,GL_POINT)
+
+        if(iMode == MODE_SOLID):
+            glPolygonMode(GL_FRONT_AND_BACK,GL_FILL)
+
         # Save matrix state and do the rotation
         glPushMatrix()
         glRotatef(xRot, 1, 0, 0)
         glRotatef(yRot, 0, 1, 0)
         
-        # Call only once for all remaining points
-        glBegin(GL_LINES)
-        z = 0.0
-        angle = 0.0
-        while angle <  3.14159:
-            # Top half of the circle
-            x = 50.0 * math.sin(angle)
-            y = 50.0 * math.cos(angle)
-            glVertex3f(x, y, z)
-            
-            # Bottom half of the circle
-            x = 50.0 * math.sin(angle + 3.14159)
-            y = 50.0 * math.cos(angle + 3.14159)
-            glVertex3f(x, y, z)
-            angle += 3.14159 / 20.0
-            
-        # Done drawing points
+        # Begin the triangles
+        glBegin(GL_TRIANGLES)
+
+        glEdgeFlag(bEdgeFlag)
+        glVertex2f(-20.0, 0.0)
+        glEdgeFlag(True)
+        glVertex2f(20.0, 0.0)
+        glVertex2f(0.0, 40.0)
+
+        glVertex2f(-20.0,0.0)
+        glVertex2f(-60.0,-20.0)
+        glEdgeFlag(bEdgeFlag)
+        glVertex2f(-20.0,-40.0)
+        glEdgeFlag(True)
+
+        glVertex2f(-20.0,-40.0)
+        glVertex2f(0.0, -80.0)
+        glEdgeFlag(bEdgeFlag)
+        glVertex2f(20.0, -40.0)
+        glEdgeFlag(True)
+
+        glVertex2f(20.0, -40.0)
+        glVertex2f(60.0, -20.0)
+        glEdgeFlag(bEdgeFlag)
+        glVertex2f(20.0, 0.0)
+        glEdgeFlag(True)
+
+        # Center square as two triangles
+        glEdgeFlag(bEdgeFlag)
+        glVertex2f(-20.0, 0.0)
+        glVertex2f(-20.0,-40.0)
+        glVertex2f(20.0, 0.0)
+        
+        glVertex2f(-20.0,-40.0)
+        glVertex2f(20.0, -40.0)
+        glVertex2f(20.0, 0.0)
+        glEdgeFlag(True)
+
         glEnd()
         
         # Restore transformations
@@ -112,5 +153,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(caption='Lines Example', resizable=True)
+    w = MainWindow(caption='Polygon Stippling', resizable=True)
     pyglet.app.run()

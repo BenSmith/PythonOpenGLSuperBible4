@@ -1,9 +1,9 @@
 # lstipple.py
-# Demonstates OpenGL Primitive GL_LINES with line widths
+# Demonstates OpenGL line stippling
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: points.cpp
+# Based heavily on: LStipple.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -84,8 +84,8 @@ class MainWindow(window.Window):
             glOrtho (-nRange*w/h, nRange*w/h, -nRange, nRange, -nRange, nRange)
 
         # Reset Model view matrix stack
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
 
     def on_key_press(self, symbol, modifier):
         global xRot, yRot
@@ -111,5 +111,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(caption='Points Example', resizable=True)
+    w = MainWindow(caption='Line Stippling', resizable=True)
     pyglet.app.run()

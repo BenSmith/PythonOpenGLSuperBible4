@@ -1,4 +1,4 @@
-# triangle.py
+# Triangle.py
 # Demonstrates OpenGL Triangle Fans, backface culling, and depth testing
 # Ben Smith
 # benjamin.coder.smith@gmail.com
@@ -20,6 +20,8 @@ iOutline = True
 
 xRot = 0.0
 yRot = 0.0
+
+# TODO: needs user interface to set cull, depth, outline
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
@@ -60,8 +62,8 @@ class MainWindow(window.Window):
             glOrtho (-nRange*w/h, nRange*w/h, -nRange, nRange, -nRange, nRange)
 
         # Reset Model view matrix stack
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
 
     def on_key_press(self, symbol, modifier):
         global xRot, yRot

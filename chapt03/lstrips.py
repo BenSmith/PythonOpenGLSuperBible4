@@ -1,9 +1,9 @@
-# lines.py
-# Demonstates primitive GL_LINE_STRIP
+# lstrips.py
+# Demonstates Primitive GL_LINE_STRIP
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: Lines.cpp
+# Based heavily on: LStrips.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -38,20 +38,18 @@ class MainWindow(window.Window):
         glRotatef(yRot, 0, 1, 0)
         
         # Call only once for all remaining points
-        glBegin(GL_LINES)
-        z = 0.0
+        glBegin(GL_LINE_STRIP)
+        z = -50.0
         angle = 0.0
-        while angle <  3.14159:
-            # Top half of the circle
+        while angle < (2.0 * 3.14159) * 3.0:
             x = 50.0 * math.sin(angle)
             y = 50.0 * math.cos(angle)
+            
+            # Specify the point and move the Z value up a little
             glVertex3f(x, y, z)
             
-            # Bottom half of the circle
-            x = 50.0 * math.sin(angle + 3.14159)
-            y = 50.0 * math.cos(angle + 3.14159)
-            glVertex3f(x, y, z)
-            angle += 3.14159 / 20.0
+            z += 0.5
+            angle += 0.1
             
         # Done drawing points
         glEnd()

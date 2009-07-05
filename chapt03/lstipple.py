@@ -1,9 +1,9 @@
-# lines.py
-# Demonstates primitive GL_LINE_STRIP
+# lstipple.py
+# Demonstates OpenGL Primitive GL_LINES with line widths
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: Lines.cpp
+# Based heavily on: points.cpp
 # OpenGL SuperBible, 3rd Edition
 # Richard S. Wright Jr.
 # rwright@starstonesoftware.com
@@ -37,24 +37,23 @@ class MainWindow(window.Window):
         glRotatef(xRot, 1, 0, 0)
         glRotatef(yRot, 0, 1, 0)
         
-        # Call only once for all remaining points
-        glBegin(GL_LINES)
-        z = 0.0
-        angle = 0.0
-        while angle <  3.14159:
-            # Top half of the circle
-            x = 50.0 * math.sin(angle)
-            y = 50.0 * math.cos(angle)
-            glVertex3f(x, y, z)
+        pattern = 0x5555
+        
+        # Enable Stippling
+        glEnable(GL_LINE_STIPPLE)
+        
+        factor = 1
+        y = -90.0
+        while y < 90.0:
+            glLineStipple(factor, pattern)
             
-            # Bottom half of the circle
-            x = 50.0 * math.sin(angle + 3.14159)
-            y = 50.0 * math.cos(angle + 3.14159)
-            glVertex3f(x, y, z)
-            angle += 3.14159 / 20.0
+            glBegin(GL_LINES)
+            glVertex2f(-80.0, y)
+            glVertex2f(80.0, y)
+            glEnd()
             
-        # Done drawing points
-        glEnd()
+            y += 20.0
+            factor += 1
         
         # Restore transformations
         glPopMatrix()

@@ -48,7 +48,7 @@ class MainWindow(window.Window):
         # Set Material properties to follow glColor values
         glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)
 
-        # Black blue background
+        # Black background
         glClearColor(0.0, 0.0, 0.0, 1.0)
 
     # Called to draw scene

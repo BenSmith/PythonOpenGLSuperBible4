@@ -19,6 +19,7 @@ sys.path.append("../shared")
 from math import cos, sin
 
 import math3d
+from math3d import M3DVector3f, m3dFindNormal
 
 xRot = 0.0
 yRot = 0.0
@@ -50,6 +51,7 @@ class MainWindow(window.Window):
 
         # Enable color tracking
         glEnable(GL_COLOR_MATERIAL)
+        glEnable(GL_TEXTURE_2D)
         
         # Set Material properties to follow glColor values
         glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)
@@ -61,7 +63,7 @@ class MainWindow(window.Window):
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         img = pyglet.image.load("Stone.jpg")
         
-        glTexImage2D(GL_TEXTURE_2D, 0, img.components, img.width, img.height, 0, img.format, GL_UNSIGNED_BYTE, img.get_texture())
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.get_data('RGB', img.pitch))
         
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
@@ -117,7 +119,7 @@ class MainWindow(window.Window):
         glVertex3fv(vCorners[4])
         
         # Front Face
-        m3dFindNormal(vNormal, vCorners[0], vCorners[4], vCorners[3])
+        vNormal = m3dFindNormal(vCorners[0], vCorners[4], vCorners[3])
         glNormal3fv(vNormal)
         glTexCoord2f(0.5, 1.0)
         glVertex3fv(vCorners[0])
@@ -127,7 +129,7 @@ class MainWindow(window.Window):
         glVertex3fv(vCorners[3])
         
         # Left Face
-        m3dFindNormal(vNormal, vCorners[0], vCorners[1], vCorners[4])
+        vNormal = m3dFindNormal(vCorners[0], vCorners[1], vCorners[4])
         glNormal3fv(vNormal)
         glTexCoord2f(0.5, 1.0)
         glVertex3fv(vCorners[0])
@@ -137,7 +139,7 @@ class MainWindow(window.Window):
         glVertex3fv(vCorners[4])
 
         # Back Face
-        m3dFindNormal(vNormal, vCorners[0], vCorners[2], vCorners[1])
+        vNormal = m3dFindNormal(vCorners[0], vCorners[2], vCorners[1])
         glNormal3fv(vNormal)
         glTexCoord2f(0.5, 1.0)
         glVertex3fv(vCorners[0])
@@ -149,7 +151,7 @@ class MainWindow(window.Window):
         glVertex3fv(vCorners[1])
         
         # Right Face
-        m3dFindNormal(vNormal, vCorners[0], vCorners[3], vCorners[2])
+        vNormal = m3dFindNormal(vCorners[0], vCorners[3], vCorners[2])
         glNormal3fv(vNormal)
         glTexCoord2f(0.5, 1.0)
         glVertex3fv(vCorners[0])

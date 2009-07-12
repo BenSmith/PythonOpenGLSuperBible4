@@ -1,7 +1,7 @@
-#!/usr/bin/env python
-
 # a python implementation of math3d.h & math3d.cpp from the OpenGL SuperBible
-
+# Ben Smith
+# benjamin.coder.smith@gmail.com
+#
 # Math3d.h
 # Header file for the Math3d library. The C-Runtime has math.h, this file and the
 # accompanying math.c are meant to suppliment math.h by adding geometry/math routines
@@ -83,7 +83,7 @@ def m3dDegToRad(num):
 # vector fits in a 4 component vector. If  M3DVector4d or M3DVector4f are passed
 # we will be OK because 4th component is not used.
 def m3dCrossProduct(u, v):
-    result = M3DVector3f()#0.0, 0.0, 0.0)
+    result = M3DVector3f()
     result[0] = u[1]*v[2] - v[1]*u[2]
     result[1] = -u[0]*v[2] + v[0]*u[2]
     result[2] = u[0]*v[1] - v[0]*u[1]
@@ -110,3 +110,33 @@ def m3dFindNormal(point1, point2, point3):
     # Take the cross product of the two vectors to get
     # the normal vector.
     return (m3dCrossProduct(v1, v2))
+    
+def m3dSetMatrixColumn44(dst, src, col):
+    dst[col * 4] = src[0]
+    dst[col * 4 + 1] = src[1]
+    dst[col * 4 + 2] = src[2]
+
+#    dst[col * 4 + 3] = src[3]
+
+# Get Square of a vectors length
+# Only for three component vectors
+def m3dGetVectorLengthSquared(u):
+    return (u[0] * u[0] + u[1] * u[1] + u[2] * u[2])
+
+def m3dScaleVector3(v, scale):
+    v[0] *= scale
+    v[1] *= scale
+    v[2] *= scale
+    
+# Get length of vector
+# Only for three component vectors.
+def m3dGetVectorLength(u):
+    return (m3dGetVectorLengthSquared(u) ** 0.5)
+    
+# Normalize a vector
+# Scale a vector to unit length. Easy, just scale the vector by it's length
+def m3dNormalizeVector(u):
+    m3dScaleVector3(u, 1.0 / m3dGetVectorLength(u))
+    
+    
+    

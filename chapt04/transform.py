@@ -4,7 +4,7 @@
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on: Atom.cpp
+# Based heavily on: Transform.cpp
 # OpenGL SuperBible
 # Program by Richard S. Wright Jr.
 

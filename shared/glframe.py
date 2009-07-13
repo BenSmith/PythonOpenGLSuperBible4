@@ -29,9 +29,8 @@ class GLFrame(object):
         self.vOrigin[0] = x
         self.vOrigin[1] = y
         self.vOrigin[2] = z
- 
 
-    # Get a 4x4 transformation matrix that describes the ccamera
+    # Get a 4x4 transformation matrix that describes the camera
     # orientation.
     def GetCameraOrientation(self):
         m = M3DMatrix44f()
@@ -44,7 +43,9 @@ class GLFrame(object):
         z[2] = -self.vForward[2]
 
         # X vector = Y cross Z 
-        x = m3dCrossProduct(self.vUp, z)
+        
+        #BS I had to switch the order of the vectors for the example to work correctly.  I'm sure I'm doing something wrong, but I don't understand what.
+        x = m3dCrossProduct(z, self.vUp)
 
         # Matrix has no translation information and is
         # transposed.... (rows instead of columns)
@@ -88,13 +89,6 @@ class GLFrame(object):
         # If Rotation only, then do not do the translation
         if not bRotOnly:
             glTranslatef(-self.vOrigin[0], -self.vOrigin[1], -self.vOrigin[2])
-
-        # BS this is commented out in the c++ code... 
-#        gluLookAt(self.vOrigin[0], self.vOrigin[1], self.vOrigin[2],
-#                        self.vOrigin[0] + self.vForward[0], 
-#                        self.vOrigin[1] + self.vForward[1], 
-#                        self.vOrigin[2] + self.vForward[2], 
-#                        self.vUp[0], self.vUp[1], self.vUp[2])
 
     # Just assemble the matrix
     def GetMatrix(self, bRotationOnly = False):
@@ -153,7 +147,7 @@ class GLFrame(object):
         m3dRotationMatrix44(rotMat, fAngle, self.vUp[0], self.vUp[1], self.vUp[2])
 
         newVect = M3DVector3f()
-
+        
         # Rotate forward pointing vector (inlined 3x3 transform)
         newVect[0] = rotMat[0] * self.vForward[0] + rotMat[4] * self.vForward[1] + rotMat[8] *  self.vForward[2]
         newVect[1] = rotMat[1] * self.vForward[0] + rotMat[5] * self.vForward[1] + rotMat[9] *  self.vForward[2]
@@ -161,4 +155,3 @@ class GLFrame(object):
         self.vForward[0] = newVect[0]
         self.vForward[1] = newVect[1]
         self.vForward[2] = newVect[2]
-        

@@ -109,9 +109,9 @@ class MainWindow(window.Window):
     # Respond to arrow keys by moving the camera frame of reference
     def on_key_press(self, symbol, modifier):
         if symbol == key.UP:
-            frameCamera.MoveForward(0.1)
+            frameCamera.MoveForward(1.0)
         elif symbol == key.DOWN:
-            frameCamera.MoveForward(-0.1)
+            frameCamera.MoveForward(-1.0)
         elif symbol == key.LEFT:
             frameCamera.RotateLocalY(0.1)
         elif symbol == key.RIGHT:

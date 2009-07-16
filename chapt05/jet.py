@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# Demonstrates Ambient Lighting
+# A hand modeled Jet airplane
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# based heavily on ambient.cpp
+# based heavily on jet.cpp
 # OpenGL SuperBible
 # Program by Richard S. Wright Jr.
 
@@ -28,17 +28,6 @@ class MainWindow(window.Window):
         glEnable(GL_DEPTH_TEST)	
         glEnable(GL_CULL_FACE)		# Do not calculate inside of jet
         glFrontFace(GL_CCW)		# Counter clock-wise polygons face out
-
-        # Lighting stuff
-        glEnable(GL_LIGHTING)			# Enable lighting	
-
-        # Set light model to use ambient light specified by ambientLight
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambientLight)
-
-        glEnable(GL_COLOR_MATERIAL)	# Enable Material color tracking
-
-        # Front material ambient and diffuse colors track glColor
-        glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE)
 
         # Nice light blue
         glClearColor(0.0, 0.0, 5.0,1.0)
@@ -189,5 +178,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(800, 600, caption='Ambient Light Jet', resizable=True)
+    w = MainWindow(800, 600, caption='Jet', resizable=True)
     pyglet.app.run()

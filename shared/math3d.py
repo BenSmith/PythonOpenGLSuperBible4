@@ -10,6 +10,7 @@
 from pyglet.gl import *
 from math import sin, cos
 
+
 M3D_PI = 3.14159265358979323846
 M3D_PI_DIV_180 = M3D_PI / 180.0
 
@@ -138,5 +139,42 @@ def m3dGetVectorLength(u):
 def m3dNormalizeVector(u):
     m3dScaleVector3(u, 1.0 / m3dGetVectorLength(u))
     
-    
-    
+# Graceless, but duplicating the one from OpenGL SuperBible would be worse, I think?
+# Adds a dependency on numpy, also, which is a bummer.
+def m3dInvertMatrix44(dst, src):
+    try:
+        from numpy import matrix
+    except ImportError:
+        print "You need Numpy."
+        import sys
+        sys.exit(1)
+        
+    mat = matrix(   [[src[0], src[1], src[2], src[3]],
+                    [src[4], src[5], src[6], src[7]],
+                    [src[8], src[9], src[10], src[11]],
+                    [src[12], src[13], src[14], src[15]]])
+    mat = mat.I.tolist()                
+    dst[0] = mat[0][0]
+    dst[1] = mat[0][1]
+    dst[2] = mat[0][2]
+    dst[3] = mat[0][3]
+
+    dst[4] = mat[1][0]
+    dst[5] = mat[1][1]
+    dst[6] = mat[1][2]
+    dst[7] = mat[1][3]
+
+    dst[8] = mat[2][0]
+    dst[9] = mat[2][1]
+    dst[10] = mat[2][2]
+    dst[11] = mat[2][3]
+
+    dst[12] = mat[3][0]
+    dst[13] = mat[3][1]
+    dst[14] = mat[3][2]
+    dst[15] = mat[3][3]
+
+# Dot Product, only for three component vectors
+# return u dot v
+def m3dDotProduct(u, v):
+    return (u[0] * v[0] + u[1] * v[1] + u[2] * v[2])

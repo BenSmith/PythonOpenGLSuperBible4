@@ -15,6 +15,7 @@ M3D_PI = 3.14159265358979323846
 M3D_PI_DIV_180 = M3D_PI / 180.0
 
 M3DVector3f = GLfloat * 3 # Vector of three floats (x, y, z)
+M3DVector4f = GLfloat * 4
 M3DMatrix44f = GLfloat * 16 # A 4 X 4 matrix, column major (floats) - OpenGL style
 
 def m3dTransformVector3(vOut, v, m):
@@ -179,9 +180,75 @@ def m3dInvertMatrix44(dst, src):
 def m3dDotProduct(u, v):
     return (u[0] * v[0] + u[1] * v[1] + u[2] * v[2])
     
-def m3dGetPlaneEquation(a, b, c):
-    pass
+
+# Get plane equation from three points and a normal
+# Calculate the plane equation of the plane that the three specified points lay in. The
+# points are given in clockwise winding order, with normal pointing out of clockwise face
+# planeEq contains the A,B,C, and D of the plane equation coefficients
+def m3dGetPlaneEquation(p1, p2, p3):
+    planeEq = M3DVector4f()
+    (v1, v2) = (M3DVector3f(), M3DVector3f())
     
-def m3dMakePlanarShadowMatrix(pPlane, fLightPos):
-    pass
+    # V1 = p3 - p1
+    v1[0] = p3[0] - p1[0]
+    v1[1] = p3[1] - p1[1]
+    v1[2] = p3[2] - p1[2]
+
+    # V2 = P2 - p1
+    v2[0] = p2[0] - p1[0]
+    v2[1] = p2[1] - p1[1]
+    v2[2] = p2[2] - p1[2]
+
+    # Unit normal to plane - Not sure which is the best way here
+    planeEq3 = m3dCrossProduct(v1, v2)
+    m3dNormalizeVector(planeEq3)
+    
+    # Back substitute to get D
+    planeEq[0] = planeEq3[0]
+    planeEq[1] = planeEq3[1]
+    planeEq[2] = planeEq3[2]
+    
+    planeEq[3] = -(planeEq[0] * p3[0] + planeEq[1] * p3[1] + planeEq[2] * p3[2])
+    return planeEq
+
+# Planar shadow Matrix
+# Creae a projection to "squish" an object into the plane.
+# Use m3dGetPlaneEquationf(planeEq, point1, point2, point3)
+# to get a plane equation.
+
+def m3dMakePlanarShadowMatrix(planeEq, vLightPos):
+    proj = M3DMatrix44f()
+    
+    # these make the code below easier to read.
+    a = planeEq[0]
+    b = planeEq[1]
+    c = planeEq[2]
+    d = planeEq[3]
+    
+    dx = -vLightPos[0]
+    dy = -vLightPos[1]
+    dz = -vLightPos[2]
+    
+    # Now build the projection matrix
+    proj[0] = b * dy + c * dz
+    proj[1] = -a * dy
+    proj[2] = -a * dz
+    proj[3] = 0.0
+
+    proj[4] = -b * dx
+    proj[5] = a * dx + c * dz
+    proj[6] = -b * dz
+    proj[7] = 0.0
+
+    proj[8] = -c * dx
+    proj[9] = -c * dy
+    proj[10] = a * dx + b * dy
+    proj[11] = 0.0
+
+    proj[12] = -d * dx
+    proj[13] = -d * dy
+    proj[14] = -d * dz
+    proj[15] = a * dx + b * dy + c * dz
+    # Shadow matrix ready
+    return proj
     

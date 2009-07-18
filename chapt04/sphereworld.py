@@ -36,12 +36,12 @@ def DrawGround():
     iLine = -fExtent
     glBegin(GL_LINES)
     while (iLine <= fExtent):
-        # pyglet reverses the y axis
-        glVertex3f(iLine, -y, fExtent) # Draw Z lines
-        glVertex3f(iLine, -y, -fExtent)
         
-        glVertex3f(fExtent, -y, iLine)
-        glVertex3f(-fExtent, -y, iLine)
+        glVertex3f(iLine, y, fExtent) # Draw Z lines
+        glVertex3f(iLine, y, -fExtent)
+        
+        glVertex3f(fExtent, y, iLine)
+        glVertex3f(-fExtent, y, iLine)
         
         iLine += fStep
         

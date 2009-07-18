@@ -20,14 +20,17 @@ sys.path.append("../shared")
 
 from math3d import M3D_PI, M3DVector3f, M3DMatrix44f, m3dTransformVector3, m3dDegToRad, m3dRotationMatrix44, m3dGetPlaneEquation, m3dMakePlanarShadowMatrix
 from glframe import GLFrame
-from forpyglet import glutSolidSphere, gltDrawTorus, gltDrawSphere
+from forpyglet import glutSolidSphere, gltDrawTorus
 
 NUM_SPHERES = 50
 spheres = [GLFrame() for i in range(NUM_SPHERES)]
 frameCamera = GLFrame()
 
 # Light and material data
-fLightPos = (GLfloat * 4)(-100.0, 100.0, 50.0, 1.0)
+
+# pyglet reverses y direction
+fLightPos = (GLfloat * 4)(-100.0, -100.0, 50.0, 1.0)
+
 lightArrayType = GLfloat * 4
 fNoLight = lightArrayType(0.0, 0.0, 0.0, 0.0)
 fLowLight = lightArrayType(0.25, 0.25, 0.25, 1.0)
@@ -51,7 +54,7 @@ szTextureFiles = ["grass.jpg", "wood.jpg", "orb.jpg"]
 def DrawGround():
     fExtent = 20.0
     fStep = 1.0
-    y = -0.4
+    y = 0.4
     s = 0.0
     t = 0.0
     texStep = 1.0 / (fExtent * 0.075)
@@ -68,19 +71,19 @@ def DrawGround():
         
         iRun = fExtent
         while (iRun >= -fExtent):
-            glTexCoord2f(s, t)
-            glNormal3f(0.0, 1.0, 0.0) # All Point up
+            glTexCoord2f(s, -t)
+            glNormal3f(0.0, -1.0, 0.0) # All Point up
             glVertex3f(iStrip, y, iRun)
             
-            glTexCoord2f(s + texStep, t)
-            glNormal3f(0.0, 1.0, 0.0) # All Point up
+            glTexCoord2f(s + texStep, -t)
+            glNormal3f(0.0, -1.0, 0.0) # All Point up
             glVertex3f(iStrip + fStep, y, iRun)
             
             t += texStep
             iRun -= fStep
             
         glEnd()
-        s += texStep        
+        s += texStep
         iStrip += fStep
 
 # Draw random inhabitants and the rotating torus/sphere duo
@@ -91,7 +94,9 @@ def DrawInhabitants(nShadow):
         glColor4f(1.0, 1.0, 1.0, 1.0)
     else:
         glColor4f(0.0, 0.0, 0.0, 0.6) # Shadow color
-        
+
+    # Draw the randomly located spheres
+    glBindTexture(GL_TEXTURE_2D, textureObjects[SPHERE_TEXTURE])
     for sphere in spheres:
         glPushMatrix()
         
@@ -101,12 +106,13 @@ def DrawInhabitants(nShadow):
         glPopMatrix()
         
     glPushMatrix()
-    glTranslatef(0.0, 0.1, -2.5)
+    # -y is up in pyglet
+    glTranslatef(0.0, -0.1, -2.5)
     
     glPushMatrix()
     glRotatef(-yRot * 2.0, 0.0, 1.0, 0.0)
     glTranslatef(1.0, 0.0, 0.0)
-    gltDrawSphere(0.1, 21, 11)
+    glutSolidSphere(0.1, 21, 11)
     glPopMatrix()
     
     if nShadow == 0:
@@ -123,10 +129,10 @@ class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
         window.Window.__init__(self, *args, **kwargs)
         
-        
-        vPoints = (M3DVector3f * 3)((0.0, -0.4, 0.0),
-                                     (10.0, -0.4, 0.0),
-                                     (5.0, -0.4, -5.0)
+        # pyglet reverses y axis
+        vPoints = (M3DVector3f * 3)((0.0, 0.4, 0.0),
+                                     (10.0, 0.4, 0.0),
+                                     (5.0,0.4, -5.0)
                                     )
         
         # Grayish background
@@ -156,9 +162,8 @@ class MainWindow(window.Window):
         glEnable(GL_LIGHT0)
 
         # Calculate shadow matrix
-        pPlane = m3dGetPlaneEquation(vPoints[0], vPoints[1], vPoints[2])
+        pPlane = m3dGetPlaneEquation(vPoints[0], vPoints[1] , vPoints[2])
         mShadowMatrix = m3dMakePlanarShadowMatrix(pPlane, fLightPos)
-        
         # Mostly use material tracking
         glEnable(GL_COLOR_MATERIAL)
         glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)
@@ -199,7 +204,7 @@ class MainWindow(window.Window):
     # Called to draw scene
     def on_draw(self):
         # Clear the window with the current clearing color
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)
 
         glPushMatrix()
         

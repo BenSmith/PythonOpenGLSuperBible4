@@ -88,10 +88,11 @@ class MainWindow(window.Window):
         window.Window.__init__(self, *args, **kwargs)
         # Load a 1D texture with toon shaded values
         # Green, greener...
-        toonTable = (GLubyte * 3 * 4)(     (0, 32, 0), 
-                                            (0, 64, 0),
-                                            (0, 128, 0),
-                                            (0, 192, 0))
+        toonTable = (GLubyte * 3 * 4)( (0, 32, 0), 
+                                        (0, 64, 0),
+                                        (0, 128, 0),
+                                        (0, 192, 0)
+                                      )
         # Bluish background
         glClearColor(0.0, 0.0, 0.5, 1.0)
         glEnable(GL_DEPTH_TEST)

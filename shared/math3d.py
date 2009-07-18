@@ -178,3 +178,10 @@ def m3dInvertMatrix44(dst, src):
 # return u dot v
 def m3dDotProduct(u, v):
     return (u[0] * v[0] + u[1] * v[1] + u[2] * v[2])
+    
+def m3dGetPlaneEquation(a, b, c):
+    pass
+    
+def m3dMakePlanarShadowMatrix(pPlane, fLightPos):
+    pass
+    

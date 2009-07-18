@@ -54,3 +54,6 @@ def gltDrawTorus(majorRadius, minorRadius, numMajor, numMinor):
             
         glEnd()
         i += 1
+
+def gltDrawSphere(a, b, c):
+    pass

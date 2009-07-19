@@ -3,7 +3,7 @@
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# based heavily on litjet.cpp
+# based heavily on shadow.cpp
 # OpenGL SuperBible
 # Program by Richard S. Wright Jr.
 

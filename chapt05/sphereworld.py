@@ -68,11 +68,15 @@ def DrawGround():
 def DrawInhabitants(nShadow):
     global yRot
     if nShadow == 0:
-        yRot += 0.5
+        pass #yRot += 0.5
     else:
+        glColor3f(0.0, 0.0, 0.0)
+
+    
+    # Draw the randomly located spheres
+    if nShadow == 0:
         glColor3f(0.0, 1.0, 0.0)
 
-    # Draw the randomly located spheres
     for sphere in spheres:
         glPushMatrix()
         
@@ -108,10 +112,10 @@ class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
         window.Window.__init__(self, *args, **kwargs)
         
-        # pyglet reverses y axis
-        vPoints = (M3DVector3f * 3)((0.0, 0.4, 0.0),
-                                     (10.0, 0.4, 0.0),
-                                     (5.0,0.4, -5.0)
+        # Calculate shadow matrix
+        vPoints = (M3DVector3f * 3)((0.0, -0.4, 0.0),
+                                     (10.0, -0.4, 0.0),
+                                     (5.0,-0.4, -5.0)
                                     )
         
         # Grayish background
@@ -132,9 +136,12 @@ class MainWindow(window.Window):
         glEnable(GL_LIGHTING)
         glEnable(GL_LIGHT0)
 
-        # Calculate shadow matrix
+        # Get the plane equation from three points on the ground
         vPlaneEquation = m3dGetPlaneEquation(vPoints[0], vPoints[1] , vPoints[2])
+        
+        # Calculate projection matrix to draw shadown on the ground
         mShadowMatrix = m3dMakePlanarShadowMatrix(vPlaneEquation, fLightPos)
+        
         # Mostly use material tracking
         glEnable(GL_COLOR_MATERIAL)
         glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)

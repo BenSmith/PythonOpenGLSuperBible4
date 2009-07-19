@@ -210,11 +210,12 @@ def m3dGetPlaneEquation(p1, p2, p3):
     planeEq[2] = planeEq3[2]
     
     planeEq[3] = -(planeEq[0] * p3[0] + planeEq[1] * p3[1] + planeEq[2] * p3[2])
+    
     return planeEq
 
 # Planar shadow Matrix
 # Creae a projection to "squish" an object into the plane.
-# Use m3dGetPlaneEquationf(planeEq, point1, point2, point3)
+# Use m3dGetPlaneEquationf( point1, point2, point3)
 # to get a plane equation.
 
 def m3dMakePlanarShadowMatrix(planeEq, vLightPos):

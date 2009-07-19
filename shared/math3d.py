@@ -14,6 +14,7 @@ from math import sin, cos
 M3D_PI = 3.14159265358979323846
 M3D_PI_DIV_180 = M3D_PI / 180.0
 
+M3DVector2f = GLfloat * 2
 M3DVector3f = GLfloat * 3 # Vector of three floats (x, y, z)
 M3DVector4f = GLfloat * 4
 M3DMatrix44f = GLfloat * 16 # A 4 X 4 matrix, column major (floats) - OpenGL style

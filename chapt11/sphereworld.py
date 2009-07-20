@@ -28,7 +28,7 @@ frameCamera = GLFrame()
 
 # Light and material data
 
-# pyglet reverses y direction
+
 fLightPos = (GLfloat * 4)(-100.0, 100.0, 50.0, 1.0)
 
 lightArrayType = GLfloat * 4
@@ -49,6 +49,9 @@ textureObjects = (GLuint * NUM_TEXTURES)()
 
 szTextureFiles = ["grass.jpg", "wood.jpg", "orb.jpg"]
 
+(sphereList, groundList, torusList) = (GLuint(), GLuint(), GLuint())
+
+iMethod = 1
 
 # Draw a gridded ground
 def DrawGround():
@@ -71,11 +74,11 @@ def DrawGround():
         
         iRun = fExtent
         while (iRun >= -fExtent):
-            glTexCoord2f(s, -t)
+            glTexCoord2f(s, t)
             glNormal3f(0.0, 1.0, 0.0) # All Point up
             glVertex3f(iStrip, y, iRun)
             
-            glTexCoord2f(s + texStep, -t)
+            glTexCoord2f(s + texStep, t)
             glNormal3f(0.0, 1.0, 0.0) # All Point up
             glVertex3f(iStrip + fStep, y, iRun)
             
@@ -101,7 +104,10 @@ def DrawInhabitants(nShadow):
         glPushMatrix()
         
         sphere.ApplyActorTransform()
-        glutSolidSphere(0.3, 21, 11)
+        if iMethod == 0:
+            glutSolidSphere(0.3, 21, 11)
+        else:
+            glCallList(sphereList)
         
         glPopMatrix()
         
@@ -112,7 +118,10 @@ def DrawInhabitants(nShadow):
     glPushMatrix()
     glRotatef(-yRot * 2.0, 0.0, 1.0, 0.0)
     glTranslatef(1.0, 0.0, 0.0)
-    glutSolidSphere(0.1, 21, 11)
+    if iMethod == 0:
+        glutSolidSphere(0.1, 21, 11)
+    else:
+        glCallList(sphereList)
     glPopMatrix()
     
     if nShadow == 0:
@@ -121,12 +130,16 @@ def DrawInhabitants(nShadow):
         
     glRotatef(yRot, 0.0, 1.0, 0.0)
     glBindTexture(GL_TEXTURE_2D, textureObjects[TORUS_TEXTURE])
-    gltDrawTorus(0.35, 0.15, 61, 37)
+    if iMethod == 0:
+        gltDrawTorus(0.35, 0.15, 61, 37)
+    else:
+        glCallList(torusList)
     glMaterialfv(GL_FRONT, GL_SPECULAR, fNoLight)
     glPopMatrix()
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
+        global groundList, sphereList, torusList
         window.Window.__init__(self, *args, **kwargs)
         
         # pyglet reverses y axis
@@ -160,6 +173,10 @@ class MainWindow(window.Window):
         glLightfv(GL_LIGHT0, GL_SPECULAR, fBrightLight)
         glEnable(GL_LIGHTING)
         glEnable(GL_LIGHT0)
+        
+        # TODO: this doesn't seem to be enough to make this work on my computer?
+        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR)
+
 
         # Calculate shadow matrix
         pPlane = m3dGetPlaneEquation(vPoints[0], vPoints[1] , vPoints[2])
@@ -175,25 +192,49 @@ class MainWindow(window.Window):
             # Pick a random location between -20 and 20 at .1 increments
             sphere.setOrigin(float(randint(-200, 200)) * 0.1, 0.0, float(randint(-200, 200)) * 0.1)
 
-    # Set up texture maps
-    glEnable(GL_TEXTURE_2D)
-    glGenTextures(NUM_TEXTURES, textureObjects)
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-    
-    for iLoop in range(0, NUM_TEXTURES):        
-        glBindTexture(GL_TEXTURE_2D, textureObjects[iLoop])
+        # Set up texture maps
+        glEnable(GL_TEXTURE_2D)
+        glGenTextures(NUM_TEXTURES, textureObjects)
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
         
-        # Load this texture map
-        img = pyglet.image.load(szTextureFiles[iLoop])
-        
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, img.width, img.height, GL_RGB, GL_UNSIGNED_BYTE, img.get_data('RGB', img.pitch))
-        
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        for iLoop in range(0, NUM_TEXTURES):        
+            glBindTexture(GL_TEXTURE_2D, textureObjects[iLoop])
+            
+            # Load this texture map
+            img = pyglet.image.load(szTextureFiles[iLoop])
+            
+            gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, img.width, img.height, GL_RGB, GL_UNSIGNED_BYTE, img.get_data('RGB', img.pitch))
+            
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
+        # Create display lists
+        firstlist = glGenLists(3)
+        groundList = GLuint(firstlist)
+        sphereList = GLuint(firstlist + 1)
+        torusList = GLuint(firstlist + 2)
+        print firstlist
+        # Create sphere display list
+        glNewList(sphereList, GL_COMPILE)
+        glutSolidSphere(0.1, 40, 20)
+        glEndList()
+
+        # Create torus display list
+        glNewList(torusList, GL_COMPILE)
+        gltDrawTorus(0.35, 0.15, 61, 37)
+        glEndList()
+        
+        # Create the ground display list
+        glNewList(groundList, GL_COMPILE)
+        DrawGround()
+        glEndList()
+    
+    
     def __del__(self):
+        # Delete the display list
+        glDeleteLists(groundList, 3)
         # Delete the textures
         glDeleteTextures(NUM_TEXTURES, textureObjects)
     
@@ -215,7 +256,10 @@ class MainWindow(window.Window):
         
         # Draw the ground
         glColor3f(1.0, 1.0, 1.0)
-        DrawGround()
+        if iMethod == 0:
+            DrawGround()
+        else:
+            glCallList(groundList)
         
         # Draw shadows first
         glDisable(GL_DEPTH_TEST)

@@ -22,14 +22,11 @@ class GLFrame(object):
         self.vOrigin = M3DVector3f(0.0, 0.0, 0.0)    # Where am I?
         # Forward is -Z (default OpenGL)
         self.vForward = M3DVector3f(0.0, 0.0, -1.0) # Where am I going?
-        # Up is -y in pyglet
-        self.vUp = M3DVector3f(0.0, -1.0, 0.0)       # Which way is up?
+        self.vUp = M3DVector3f(0.0, 1.0, 0.0)       # Which way is up?
         
     def setOrigin(self, x, y, z):
         self.vOrigin[0] = x
-        
         self.vOrigin[1] = y
-        
         self.vOrigin[2] = z
 
     # Get a 4x4 transformation matrix that describes the camera
@@ -45,9 +42,7 @@ class GLFrame(object):
         z[2] = -self.vForward[2]
 
         # X vector = Y cross Z 
-        
-        #BS I had to switch the order of the vectors for the example to work correctly.  I'm sure I'm doing something wrong, but I don't understand what.
-        x = m3dCrossProduct(z, self.vUp)
+        x = m3dCrossProduct(self.vUp, z)
 
         # Matrix has no translation information and is
         # transposed.... (rows instead of columns)
@@ -146,7 +141,7 @@ class GLFrame(object):
         # Just Rotate around the up vector
         # Create a rotation matrix around my Up (Y) vector
         rotMat = M3DMatrix44f()
-        m3dRotationMatrix44(rotMat, fAngle, -self.vUp[0], -self.vUp[1], -self.vUp[2])
+        m3dRotationMatrix44(rotMat, fAngle, self.vUp[0], self.vUp[1], self.vUp[2])
 
         newVect = M3DVector3f()
         

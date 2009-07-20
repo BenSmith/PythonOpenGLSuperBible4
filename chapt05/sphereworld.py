@@ -29,7 +29,7 @@ frameCamera = GLFrame()
 # Light and material data
 
 # pyglet reverses y direction
-fLightPos = (GLfloat * 4)(-100.0, -100.0, 50.0, 1.0)
+fLightPos = (GLfloat * 4)(-100.0, 100.0, 50.0, 1.0)
 
 lightArrayType = GLfloat * 4
 fNoLight = lightArrayType(0.0, 0.0, 0.0, 0.0)
@@ -44,7 +44,7 @@ mShadowMatrix = M3DMatrix44f()
 def DrawGround():
     fExtent = 20.0
     fStep = 1.0
-    y = 0.4
+    y = -0.4
     
     iStrip = -fExtent
     
@@ -52,7 +52,7 @@ def DrawGround():
         t = 0.0
         glBegin(GL_TRIANGLE_STRIP)
         
-        glNormal3f(0.0, -1.0, 0.0) # All point up - pyglet reverses y axis
+        glNormal3f(0.0, 1.0, 0.0) # All point up
         iRun = fExtent
         while (iRun >= -fExtent):
             glVertex3f(iStrip, y, iRun)
@@ -87,7 +87,7 @@ def DrawInhabitants(nShadow):
         
     glPushMatrix()
     # -y is up in pyglet
-    glTranslatef(0.0, -0.1, -2.5)
+    glTranslatef(0.0, 0.1, -2.5)
     
     if nShadow == 0:
         glColor3f(0.0, 0.0, 1.0)

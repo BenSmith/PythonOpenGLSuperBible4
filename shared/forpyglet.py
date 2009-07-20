@@ -36,23 +36,19 @@ def gltDrawTorus(majorRadius, minorRadius, numMajor, numMinor):
             # First point
             glTexCoord2f(float(i)/float(numMajor), float(j)/float(numMinor))
             vNormal[0] = x0*c
-            # invert y axis for pyglet
-            vNormal[1] = -y0*c
+            vNormal[1] = y0*c
             vNormal[2] = z/minorRadius
             m3dNormalizeVector(vNormal)
             glNormal3fv(vNormal)
-            # invert y axis for pyglet
-            glVertex3f(x0*r, -y0*r, z)
+            glVertex3f(x0*r, y0*r, z)
             
             glTexCoord2f(float(i+1)/float(numMajor), float(j)/float(numMinor))
             vNormal[0] = x1*c
-            # invert y axis for pyglet
-            vNormal[1] = -y1*c
+            vNormal[1] = y1*c
             vNormal[2] = z/minorRadius
             m3dNormalizeVector(vNormal)
             glNormal3fv(vNormal)
-            # invert y axis for pyglet
-            glVertex3f(x1*r, -y1*r, z)
+            glVertex3f(x1*r, y1*r, z)
             
             j += 1
             

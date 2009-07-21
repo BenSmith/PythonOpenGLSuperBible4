@@ -2,7 +2,7 @@
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based heavily on Bez3d.cpp
+# Based heavily on bezlit.cpp
 # OpenGL SuperBible
 # Program by Richard S. Wright Jr.
 
@@ -98,7 +98,7 @@ class MainWindow(window.Window):
 
         glPopMatrix()
 
-    ###################/
+    ###################
     # Set 2D Projection negative 10 to positive 10 in X and Y
     # Called when the window has changed size (including when the window is created)
     def on_resize(self, w, h):

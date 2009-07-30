@@ -16,6 +16,11 @@ from pyglet.window import key
 from random import randint
 import ctypes
 
+functype = ctypes.CFUNCTYPE
+import sys
+if sys.platform == 'win32':
+    functype = ctypes.WINFUNCTYPE
+
 COAST_POINTS = 24
 vCoast = (GLdouble * 3 * COAST_POINTS)((-70.0, 30.0, 0.0 ),
                                     (-50.0, 30.0, 0.0 ),
@@ -55,10 +60,10 @@ DRAW_CONCAVE = 1
 DRAW_COMPLEX = 2
 iMethod = DRAW_LOOPS   # Default, draw line loops
 
-glBeginFuncType = CFUNCTYPE(None, GLenum)
-glEndFuncType = CFUNCTYPE(None)
-glVertex3dvFuncType = CFUNCTYPE(None, POINTER(GLdouble))
-glTessErrorFuncType = CFUNCTYPE(None, GLenum)
+glBeginFuncType = functype(None, GLenum)
+glEndFuncType = functype(None)
+glVertex3dvFuncType = functype(None, POINTER(GLdouble))
+glTessErrorFuncType = functype(None, GLenum)
 
 glBeginFunc = glBeginFuncType(glBegin)
 glEndFunc = glEndFuncType(glEnd)
@@ -69,9 +74,10 @@ def py_tessError(error):
 
 tessError = glTessErrorFuncType(py_tessError)
 
-begin = ctypes.cast(glBeginFunc, _GLUfuncptr)
-vertex = ctypes.cast(glVertex3dvFunc, _GLUfuncptr)
-tessError = ctypes.cast(tessError, _GLUfuncptr)
+begin = ctypes.cast(glBeginFunc, CFUNCTYPE(None))
+end = ctypes.cast(glEndFunc, CFUNCTYPE(None))
+vertex = ctypes.cast(glVertex3dvFunc, CFUNCTYPE(None))
+tessError = ctypes.cast(tessError, CFUNCTYPE(None))
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
@@ -123,7 +129,7 @@ class MainWindow(window.Window):
             gluTessCallback(pTess, GLU_TESS_BEGIN, begin) 
             
             # Just call glEnd at end of triangle batch
-            gluTessCallback(pTess, GLU_TESS_END, glEndFunc)
+            gluTessCallback(pTess, GLU_TESS_END, end)
             
             # Just call glVertex3dv for each  vertex
             gluTessCallback(pTess, GLU_TESS_VERTEX, vertex)
@@ -163,7 +169,7 @@ class MainWindow(window.Window):
             gluTessCallback(pTess, GLU_TESS_BEGIN, begin)
             
             # Just call glEnd at end of triangle batch
-            gluTessCallback(pTess, GLU_TESS_END, glEndFunc)
+            gluTessCallback(pTess, GLU_TESS_END, end)
             
             # Just call glVertex3dv for each  vertex
             gluTessCallback(pTess, GLU_TESS_VERTEX, vertex)

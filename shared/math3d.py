@@ -13,6 +13,7 @@ from math import sin, cos
 
 M3D_PI = 3.14159265358979323846
 M3D_PI_DIV_180 = M3D_PI / 180.0
+M3D_INV_PI_DIV_180 = 57.2957795130823229
 
 M3DVector2f = GLfloat * 2
 M3DVector3f = GLfloat * 3 # Vector of three floats (x, y, z)
@@ -30,6 +31,18 @@ def m3dLoadIdentity44(m):
     m[6] = m[7] = m[8] = m[9] = 0.0
     m[11] = m[12] = m[13] = m[14] = 0.0
     
+
+# Translate matrix. Only 4x4 matrices supported
+def m3dTranslateMatrix44(m, x, y, z):
+    m[12] += x
+    m[13] += y
+    m[14] += z
+
+# Scale matrix. Only 4x4 matrices supported
+def m3dScaleMatrix44(m, x, y, z):
+    m[0] *= x
+    m[5] *= y
+    m[10] *= z
 
 # Creates a 4x4 rotation matrix, takes radians NOT degrees
 def m3dRotationMatrix44(m, angle, x, y, z):
@@ -76,8 +89,30 @@ def m3dRotationMatrix44(m, angle, x, y, z):
     m[14] = 0.0
     m[15] = 1.0
 
+# Multiply two 4x4 matricies
+def m3dMatrixMultiply44(product, a, b):
+    for i in range(0, 4):
+        ai0 = a[i]
+        ai1 = a[i + (1 << 2)]
+        ai2 = a[i + (2 << 2)]
+        ai3 = a[i + (3 << 2)]
+        
+        product[i] = ai0 * b[0] + ai1 * b[1] + ai2 * b[2] + ai3 * b[3]
+        product[i + (1 << 2)] = ai0 * b[0 + (1 << 2)] + ai1 * b[1 + (1 << 2)] + ai2 * b[2 + (1 << 2)] + ai3 * b[3 + (1 << 2)]
+        product[i + (2 << 2)] = ai0 * b[0 + (2 << 2)] + ai1 * b[1 + (2 << 2)] + ai2 * b[2 + (2 << 2)] + ai3 * b[3 + (2 << 2)]
+        product[i + (3 << 2)] = ai0 * b[0 + (3 << 2)] + ai1 * b[1 + (3 << 2)] + ai2 * b[2 + (3 << 2)] + ai3 * b[3 + (3 << 2)]
+
+# Transpose/Invert - Only 4x4 matricies supported
+def m3dTransposeMatrix44(dst, src):
+    for j in range(0, 4):
+        for i in range(0, 4):
+            dst[(j * 4) + i] = src[(i * 4) + j]
+
 def m3dDegToRad(num):
     return (num * M3D_PI_DIV_180)
+
+def m3dRadToDeg(num):
+    return (num * M3D_INV_PI_DIV_180)
 
 ###########################################################
 # Cross Product

@@ -9,6 +9,15 @@ def glutSolidSphere(radius, slices, stacks):
     gluSphere(sphere, radius, slices, stacks)
     gluDeleteQuadric(sphere)
     
+def glutSolidCube(size):
+    pass
+    
+def glutSolidCone(one, two, three, four):
+    pass
+    
+def glutSolidOctahedron():
+    pass
+    
 # For best results, put this in a display list
 # Draw a torus (doughnut)  at z = fZVal... torus is in xy plane
 def gltDrawTorus(majorRadius, minorRadius, numMajor, numMinor):

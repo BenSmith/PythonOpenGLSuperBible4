@@ -3,21 +3,6 @@ from pyglet.gl import *
 from math import sin, cos
 from math3d import M3DVector3f, M3D_PI, m3dNormalizeVector
 
-def glutSolidSphere(radius, slices, stacks):
-    sphere = gluNewQuadric()
-    gluQuadricTexture(sphere, True)
-    gluSphere(sphere, radius, slices, stacks)
-    gluDeleteQuadric(sphere)
-    
-def glutSolidCube(size):
-    pass
-    
-def glutSolidCone(one, two, three, four):
-    pass
-    
-def glutSolidOctahedron():
-    pass
-    
 # For best results, put this in a display list
 # Draw a torus (doughnut)  at z = fZVal... torus is in xy plane
 def gltDrawTorus(majorRadius, minorRadius, numMajor, numMinor):

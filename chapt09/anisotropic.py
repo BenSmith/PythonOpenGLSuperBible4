@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# Demonstrates mipmapping and using texture objects
+# Demonstrates anisotropic texture filtering
 # Ben Smith
 # benjamin.coder.smith@gmail.com
 #
-# Based on Tunnel.cpp
+# Based on anisotropic.cpp
 # OpenGL SuperBible
 # Richard S. Wright Jr.
 
@@ -153,7 +153,8 @@ class MainWindow(window.Window):
         elif symbol == key.DOWN:
             zPos -= 1.0
 
-        elif symbol in (key._1, key._2, key._3, key._4, key._5, key._6):
+        elif symbol in (key._1, key._2, key._3, key._4, key._5, key._6, key._7, key._8):
+            fLargest = GLfloat()
             for i in range(TEXTURE_COUNT):
                 glBindTexture(GL_TEXTURE_2D, textures[i])
                 if symbol == key._1:
@@ -168,7 +169,12 @@ class MainWindow(window.Window):
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
                 elif symbol == key._6:
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-
+                elif symbol == key._7:
+                    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, byref(fLargest))
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest)
+                elif symbol == key._8:
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0)
+                    
     def on_resize(self, w, h):
         # Prevent a divide by zero
         if(h == 0):
@@ -191,5 +197,5 @@ class MainWindow(window.Window):
 
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(800, 600, caption='Tunnel', resizable=True)
+    w = MainWindow(800, 600, caption='Anisotropic Tunnel', resizable=True)
     pyglet.app.run()

@@ -15,7 +15,7 @@ from random import randint
 
 import sys
 sys.path.append("../shared")
-from forpyglet import gltDrawUnitAxes
+from gltools import gltDrawUnitAxes
 
 xRot = 0.0
 yRot = 0.0

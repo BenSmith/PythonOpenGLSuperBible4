@@ -19,7 +19,7 @@ sys.path.append("../shared")
 from math import cos, sin
 
 from math3d import M3D_PI, M3DVector3f, M3DMatrix44f, m3dTransformVector3, m3dDegToRad, m3dRotationMatrix44
-from forpyglet import gltDrawTorus
+from gltools import gltDrawTorus
 
 xRot = 0.0
 yRot = 0.0

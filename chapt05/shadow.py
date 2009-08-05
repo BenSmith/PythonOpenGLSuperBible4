@@ -16,7 +16,7 @@ import sys
 sys.path.append("../shared")
 
 from math3d import M3DVector3f, m3dFindNormal, M3DMatrix44f, m3dGetPlaneEquation, m3dMakePlanarShadowMatrix
-from forpyglet import glutSolidSphere
+from fakeglut import glutSolidSphere
 
 xRot = 0.0
 yRot = 0.0

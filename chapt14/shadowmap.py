@@ -19,7 +19,7 @@ import sys
 sys.path.append("../shared")
 from sys import exit
 from math3d import M3DMatrix44f, m3dLoadIdentity44, m3dTranslateMatrix44, m3dScaleMatrix44, m3dMatrixMultiply44, m3dTransposeMatrix44, m3dRadToDeg
-from forpyglet import glutSolidCube, glutSolidSphere, glutSolidCone, glutSolidOctahedron, gltDrawTorus
+from fakeglut import glutSolidCube, glutSolidSphere, glutSolidCone, glutSolidOctahedron, glutSolidTorus
 
 ambientShadowAvailable = False
 npotTexturesAvailable = False
@@ -47,7 +47,7 @@ cameraPos = (GLfloat * 4)(100.0, 150.0, 200.0, 1.0)
 cameraZoom = 0.3
 
 textureMatrix = M3DMatrix44f()
-
+global strips
 # Called to draw scene objects
 def DrawModels(drawBasePlane):
     if drawBasePlane:
@@ -84,7 +84,7 @@ def DrawModels(drawBasePlane):
     glColor3f(1.0, 0.0, 1.0)
     glPushMatrix()
     glTranslatef(0.0, 0.0, 60.0)
-    gltDrawTorus(8.0, 16.0, 50, 50)
+    glutSolidTorus(8.0, 16.0, 50, 50)
     glPopMatrix()
 
     # Draw cyan octahedron
@@ -97,6 +97,7 @@ def DrawModels(drawBasePlane):
 
 # Called to regenerate the shadow map
 def RegenerateShadowMap():
+    global textureMatrix, strips
     lightModelview = (GLfloat * 16)()
     lightProjection = (GLfloat * 16)()
     sceneBoundingRadius = 95.0 # based on objects in scene
@@ -135,7 +136,7 @@ def RegenerateShadowMap():
 
     # Draw objects in the scene except base plane
     # which never shadows anything
-    DrawModels(GL_FALSE)
+    DrawModels(False)
 
     # Copy depth values into depth texture
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 0, 0, shadowWidth, shadowHeight, 0)
@@ -160,10 +161,16 @@ def RegenerateShadowMap():
     
     # transpose to get the s, t, r, and q rows for plane equations
     m3dTransposeMatrix44(textureMatrix, tempMatrix)
-
+    # this seems sorta awkward, but I haven't hit on a better way to index into the array in a fashion that
+    # pyglet will work with.
+    strips = [(GLfloat * 4)(textureMatrix[4], textureMatrix[5], textureMatrix[6], textureMatrix[7]),
+                (GLfloat * 4)(textureMatrix[8], textureMatrix[9], textureMatrix[10], textureMatrix[11]),
+                (GLfloat * 4)(textureMatrix[12], textureMatrix[13], textureMatrix[14], textureMatrix[15]),
+                ]
+    
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
-        global maxTexSize, ambientShadowAvailable
+        global maxTexSize, ambientShadowAvailable, npotTexturesAvailable
         window.Window.__init__(self, *args, **kwargs)
         
         print ("Shadow Mapping Demo\n")
@@ -241,10 +248,10 @@ class MainWindow(window.Window):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         if (windowWidth > windowHeight):
-            ar = windowWidth / windowHeight
+            ar = float(windowWidth) / float(windowHeight)
             glFrustum(-ar * cameraZoom, ar * cameraZoom, -cameraZoom, cameraZoom, 1.0, 1000.0)
         else:
-            ar = windowHeight / windowWidth
+            ar = float(windowHeight) / float(windowWidth)
             glFrustum(-cameraZoom, cameraZoom, -ar * cameraZoom, ar * cameraZoom, 1.0, 1000.0)
 
         glMatrixMode(GL_MODELVIEW)
@@ -297,10 +304,11 @@ class MainWindow(window.Window):
             glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight)
 
             # Draw objects in the scene including base plane
-            DrawModels(GL_TRUE)
+            DrawModels(True)
         
         else:
             if not ambientShadowAvailable:
+
                 lowAmbient = (GLfloat * 4)(0.1, 0.1, 0.1, 1.0)
                 lowDiffuse = (GLfloat * 4)(0.35, 0.35, 0.35, 1.0)
 
@@ -311,7 +319,7 @@ class MainWindow(window.Window):
                 glLightfv(GL_LIGHT0, GL_DIFFUSE, lowDiffuse)
 
                 # Draw objects in the scene, including base plane
-                DrawModels(GL_TRUE)
+                DrawModels(True)
 
                 # Enable alpha test so that shadowed fragments are discarded
                 glAlphaFunc(GL_GREATER, 0.9)
@@ -331,14 +339,13 @@ class MainWindow(window.Window):
             glEnable(GL_TEXTURE_GEN_R)
             glEnable(GL_TEXTURE_GEN_Q)
             
-            matrixPointer = pointer(textureMatrix)
-            glTexGenfv(GL_S, GL_EYE_PLANE, matrixPointer[0])
-            glTexGenfv(GL_T, GL_EYE_PLANE, matrixPointer[4])
-            glTexGenfv(GL_R, GL_EYE_PLANE, matrixPointer[8])
-            glTexGenfv(GL_Q, GL_EYE_PLANE, matrixPointer[12])
+            glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix)
+            glTexGenfv(GL_T, GL_EYE_PLANE, strips[0])
+            glTexGenfv(GL_R, GL_EYE_PLANE, strips[1])
+            glTexGenfv(GL_Q, GL_EYE_PLANE, strips[2])
 
             # Draw objects in the scene, including base plane
-            DrawModels(GL_TRUE)
+            DrawModels(True)
 
             glDisable(GL_ALPHA_TEST)
             glDisable(GL_TEXTURE_2D)
@@ -379,12 +386,90 @@ class MainWindow(window.Window):
 
         RegenerateShadowMap()
 
-    # Respond to arrow keys by moving the camera frame of reference
     def on_key_press(self, symbol, modifier):
-        if symbol == key.UP:
-            pass
+        global factor, cameraPos, lightPos, noShadows, showShadowMap, controlCamera
+        if symbol == key.F:
+            if modifier & key.MOD_SHIFT:
+                factor += 1
+                glPolygonOffset(factor, 0.0)
+                RegenerateShadowMap()
+            else:
+                factor -= 1
+                glPolygonOffset(factor, 0.0)
+                RegenerateShadowMap()
+        elif symbol == key.X:
+            if modifier & key.MOD_SHIFT:
+                if (controlCamera):
+                    cameraPos[0] -= 5.0
+                else:
+                    lightPos[0] -= 5.0
+            else:
+                if (controlCamera):
+                    cameraPos[0] += 5.0
+                else:
+                    lightPos[0] += 5.0
+        elif symbol == key.Y:
+            if modifier & key.MOD_SHIFT:
+                if (controlCamera):
+                    cameraPos[1] -= 5.0
+                else:
+                    lightPos[1] -= 5.0
+            else:
+                if (controlCamera):
+                    cameraPos[1] += 5.0
+                else:
+                    lightPos[1] += 5.0
+        elif symbol == key.Z:
+            if modifier & key.MOD_SHIFT:
+                if (controlCamera):
+                    cameraPos[2] -= 5.0
+                else:
+                    lightPos[2] -= 5.0
+            else:
+                if (controlCamera):
+                    cameraPos[2] += 5.0
+                else:
+                    lightPos[2] += 5.0
+        elif symbol == key.Q or symbol == key.ESCAPE:
+            sys.exit(0)
             
+        elif symbol == key._1:
+            noShadows = not noShadows
+            showShadowMap = False
+        elif symbol == key._2:
+            showShadowMap = not showShadowMap
+            noShadows = False
+        elif symbol == key._3:
+            controlCamera = not controlCamera
+
+        elif symbol == key.UP:
+            if (controlCamera):
+                cameraPos[2] -= 5.0
+            else:
+                lightPos[2] -= 5.0
+        elif symbol == key.DOWN:
+            if (controlCamera):
+                cameraPos[2] += 5.0
+            else:
+                lightPos[2] += 5.0
+        elif symbol == key.LEFT:
+            if (controlCamera):
+                cameraPos[0] -= 5.0
+            else:
+                lightPos[0] -= 5.0
+        elif symbol == key.RIGHT:
+            if (controlCamera):
+                cameraPos[0] += 5.0
+            else:
+                lightPos[0] += 5.0
+
+        # We don't need to regenerate the shadow map
+        # if only the camera angle changes
+        if not controlCamera:
+            RegenerateShadowMap();
+
+
 # Main program entry point
 if __name__ == '__main__':
-    w = MainWindow(800, 600, caption='Shadow Mapping Demo', resizable=True)
+    w = MainWindow(windowWidth, windowHeight, caption='Shadow Mapping Demo', resizable=True)
     pyglet.app.run()

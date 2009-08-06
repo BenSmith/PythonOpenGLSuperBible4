@@ -2,6 +2,7 @@
 from pyglet.gl import *
 from math import sin, cos
 from math3d import M3DVector3f, M3D_PI, m3dNormalizeVector
+from fakeglut import glutSolidSphere
 
 # For best results, put this in a display list
 # Draw a torus (doughnut)  at z = fZVal... torus is in xy plane

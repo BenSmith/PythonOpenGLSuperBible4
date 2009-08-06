@@ -19,7 +19,7 @@ import sys
 sys.path.append("../shared")
 
 from math3d import M3D_PI, M3DVector3f, M3DMatrix44f, m3dTransformVector3, m3dDegToRad, m3dRotationMatrix44, m3dGetPlaneEquation, m3dMakePlanarShadowMatrix
-from glframe import GLFram
+from glframe import GLFrame
 from fakeglut import glutSolidSphere
 from gltools import gltDrawTorus
 

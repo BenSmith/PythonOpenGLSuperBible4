@@ -30,8 +30,9 @@ frameCamera = GLFrame()
 szCubeFaces = ["pos_x.jpg", "neg_x.jpg", "pos_y.jpg", "neg_y.jpg", "pos_z.jpg", "neg_z.jpg"]
 cube = (GLenum * 6)(GL_TEXTURE_CUBE_MAP_POSITIVE_X,
                      GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                     GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+                     # pyglet reverses y axis
                      GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                     GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
                      GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
                      GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
 
@@ -154,7 +155,7 @@ class MainWindow(window.Window):
             # Load this texture map
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE)
             img = pyglet.image.load(szCubeFaces[i])
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.get_data('RGB', img.pitch))
+            glTexImage2D(cube[i], 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.get_data('RGB', img.pitch))
             
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP)
         glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP)
@@ -164,10 +165,6 @@ class MainWindow(window.Window):
         glEnable(GL_TEXTURE_CUBE_MAP)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
 
-
-    def update(self, blah):
-        pass
-        
     # Called to draw scene
     def on_draw(self):
         # Clear the window
@@ -247,5 +244,4 @@ class MainWindow(window.Window):
 # Main program entry point
 if __name__ == '__main__':
     w = MainWindow(800, 600, caption='OpenGL Cube Maps', resizable=True)
-    pyglet.clock.schedule_interval(w.update, 1/60.0)
     pyglet.app.run()

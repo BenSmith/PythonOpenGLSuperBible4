@@ -29,8 +29,7 @@ frameCamera = GLFrame()
 
 # Light and material data
 
-# pyglet reverses y direction
-fLightPos = (GLfloat * 4)(-100.0, -100.0, 50.0, 1.0)
+fLightPos = (GLfloat * 4)(-100.0, 100.0, 50.0, 1.0)
 
 lightArrayType = GLfloat * 4
 fNoLight = lightArrayType(0.0, 0.0, 0.0, 0.0)
@@ -55,7 +54,7 @@ szTextureFiles = ["grass.jpg", "wood.jpg", "orb.jpg"]
 def DrawGround():
     fExtent = 20.0
     fStep = 1.0
-    y = 0.4
+    y = -0.4
     s = 0.0
     t = 0.0
     texStep = 1.0 / (fExtent * 0.075)
@@ -73,11 +72,11 @@ def DrawGround():
         iRun = fExtent
         while (iRun >= -fExtent):
             glTexCoord2f(s, -t)
-            glNormal3f(0.0, -1.0, 0.0) # All Point up
+            glNormal3f(0.0, 1.0, 0.0) # All Point up
             glVertex3f(iStrip, y, iRun)
             
             glTexCoord2f(s + texStep, -t)
-            glNormal3f(0.0, -1.0, 0.0) # All Point up
+            glNormal3f(0.0, 1.0, 0.0) # All Point up
             glVertex3f(iStrip + fStep, y, iRun)
             
             t += texStep
@@ -107,8 +106,7 @@ def DrawInhabitants(nShadow):
         glPopMatrix()
         
     glPushMatrix()
-    # -y is up in pyglet
-    glTranslatef(0.0, -0.1, -2.5)
+    glTranslatef(0.0, 0.1, -2.5)
     
     glPushMatrix()
     glRotatef(-yRot * 2.0, 0.0, 1.0, 0.0)
@@ -128,12 +126,13 @@ def DrawInhabitants(nShadow):
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
+        global mShadowMatrix
         window.Window.__init__(self, *args, **kwargs)
         
         # pyglet reverses y axis
-        vPoints = (M3DVector3f * 3)((0.0, 0.4, 0.0),
-                                     (10.0, 0.4, 0.0),
-                                     (5.0,0.4, -5.0)
+        vPoints = (M3DVector3f * 3)((0.0, -0.4, 0.0),
+                                     (10.0, -0.4, 0.0),
+                                     (5.0, -0.4, -5.0)
                                     )
         
         # Grayish background

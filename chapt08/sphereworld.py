@@ -89,9 +89,7 @@ def DrawGround():
 
 # Draw random inhabitants and the rotating torus/sphere duo
 def DrawInhabitants(nShadow):
-    global yRot
     if nShadow == 0:
-        yRot += 0.5
         glColor4f(1.0, 1.0, 1.0, 1.0)
     else:
         glColor4f(0.0, 0.0, 0.0, 0.6) # Shadow color
@@ -107,7 +105,6 @@ def DrawInhabitants(nShadow):
         glPopMatrix()
         
     glPushMatrix()
-    # -y is up in pyglet
     glTranslatef(0.0, 0.1, -2.5)
     
     glPushMatrix()
@@ -128,9 +125,9 @@ def DrawInhabitants(nShadow):
 
 class MainWindow(window.Window):
     def __init__(self, *args, **kwargs):
+        global mShadowMatrix
         window.Window.__init__(self, *args, **kwargs)
         
-        # pyglet reverses y axis
         vPoints = (M3DVector3f * 3)((0.0, -0.4, 0.0),
                                      (10.0, -0.4, 0.0),
                                      (5.0,-0.4, -5.0)
